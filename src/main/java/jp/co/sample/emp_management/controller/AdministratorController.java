@@ -78,15 +78,22 @@ public class AdministratorController {
 			return toInsert();
 		}
 		
+		Administrator administratorMailAddress = administratorService.findByMailAddress(form.getMailAddress());
+		if (administratorMailAddress != null) {
+			model.addAttribute("mailAddressError", "メールアドレスが重複しています。");
+			return toInsert();
+		}
+		
 		if(!form.getPassword().equals(form.getConfirmationPassword())) {
 			model.addAttribute("errorMessage", "パスワードが一致していません。");
 			return toInsert();
 		}
 		
 		Administrator administrator = new Administrator();
-		// フォームからドメインにプロパティ値をコピー
 		BeanUtils.copyProperties(form, administrator);
+		
 		administratorService.insert(administrator);
+
 		return "redirect:/";
 	}
 
