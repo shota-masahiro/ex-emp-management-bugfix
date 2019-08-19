@@ -54,7 +54,13 @@
 		<ol class="breadcrumb">
 			<li class="active"><a href="list.html" th:href="@{/employee/showList}">従業員リスト</a></li>
 		</ol>
-
+		
+		<form th:action="@{/employee/findByName}" method="post">
+			<strong>従業員曖昧検索</strong>
+			<input type="text" name="name"> 
+			<button>検索</button>
+		</form>
+		<strong th:text="${message}"></strong>
 		<!-- table -->
 		<div class="row">
 			<div
