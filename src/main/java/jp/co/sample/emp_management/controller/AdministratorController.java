@@ -74,8 +74,12 @@ public class AdministratorController {
 			BindingResult result,
 			Model model) {
 		
-		
 		if (result.hasErrors()) {
+			return toInsert();
+		}
+		
+		if(!form.getPassword().equals(form.getConfirmationPassword())) {
+			model.addAttribute("errorMessage", "パスワードが一致していません。");
 			return toInsert();
 		}
 		
