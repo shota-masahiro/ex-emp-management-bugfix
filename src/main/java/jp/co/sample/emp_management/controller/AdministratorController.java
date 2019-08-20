@@ -1,11 +1,16 @@
 package jp.co.sample.emp_management.controller;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.DigestUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -73,6 +78,21 @@ public class AdministratorController {
 	public String insert(
 			@Validated InsertAdministratorForm form,
 			BindingResult result) {
+		
+		String password = form.getPassword();
+		String hs = "";
+		
+		System.out.println(password);
+		
+		try {
+			MessageDigest digest = MessageDigest.getInstance("SHA-1");
+			byte[] rs = digest.digest(password.getBytes());
+			hs = String.format("%040x", new BigInteger(1, rs));
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		
+		System.out.println(hs);
 
 		//エラーチェックと同じようにする
 		Administrator administratorMailAddress = administratorService.findByMailAddress(form.getMailAddress());
