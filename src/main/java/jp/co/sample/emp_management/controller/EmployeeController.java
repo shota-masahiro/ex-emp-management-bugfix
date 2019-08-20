@@ -1,7 +1,13 @@
 package jp.co.sample.emp_management.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import jp.co.sample.emp_management.domain.Employee;
+import jp.co.sample.emp_management.form.InsertEmployeeForm;
 import jp.co.sample.emp_management.form.UpdateEmployeeForm;
 import jp.co.sample.emp_management.service.EmployeeService;
 
@@ -115,4 +122,41 @@ public class EmployeeController {
 		employeeService.update(employee);
 		return "redirect:/employee/showList";
 	}
+	
+	
+	/**
+	 * 従業員登録画面を出力します.
+	 * 
+	 * @return 従業員登録画面
+	 */
+	@RequestMapping("/toInsert")
+	public String toInsert(Model model) {
+		Map<Integer, String> genderMap = new LinkedHashMap<>();
+		genderMap.put(1, "男性");
+		genderMap.put(2, "女性");
+		model.addAttribute("genderMap", genderMap);
+		return "employee/employee-insert";
+	}
+	
+	
+	@RequestMapping("/insert")
+	public String insert(InsertEmployeeForm form) throws ParseException {
+		Employee employee = new Employee();
+		BeanUtils.copyProperties(form, employee);
+		
+		Integer id = employeeService.getMaxId();
+		employee.setId(id);
+		employee.setSalary(form.getIntSalary());
+		employee.setDependentsCount(form.getIntDependentsCount());
+		
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = dateFormat.parse(form.getHireDate());
+		employee.setHireDate(date);
+		
+		employeeService.insert(employee);
+		
+		return "redirect:/employee/showList";
+	}
+	
+
 }

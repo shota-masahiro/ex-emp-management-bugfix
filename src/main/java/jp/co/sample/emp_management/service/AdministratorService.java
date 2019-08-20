@@ -43,9 +43,9 @@ public class AdministratorService {
 	public Administrator login(String mailAddress, String passward) {
 		Administrator checkAdministrator = administratorRepository.findByMailAddress(mailAddress);
 		
-		boolean loginCheck = passwordEncoder.matches(passward, checkAdministrator.getPassword());
+		boolean isLogin = passwordEncoder.matches(passward, checkAdministrator.getPassword());
 		
-		if (loginCheck) {
+		if (isLogin) {
 			return checkAdministrator;
 		}
 		
@@ -53,8 +53,10 @@ public class AdministratorService {
 	}
 
 	/**
-	 * @param mailAddress
-	 * @return
+	 * メールアドレスから管理者情報を取得します.
+	 * 
+	 * @param mailAddress メールアドレス
+	 * @return 管理者情報
 	 */
 	public Administrator findByMailAddress(String mailAddress) {
 		Administrator administrator = administratorRepository.findByMailAddress(mailAddress);

@@ -79,22 +79,6 @@ public class AdministratorController {
 			@Validated InsertAdministratorForm form,
 			BindingResult result) {
 		
-		String password = form.getPassword();
-		String hs = "";
-		
-		System.out.println(password);
-		
-		try {
-			MessageDigest digest = MessageDigest.getInstance("SHA-1");
-			byte[] rs = digest.digest(password.getBytes());
-			hs = String.format("%040x", new BigInteger(1, rs));
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println(hs);
-
-		//エラーチェックと同じようにする
 		Administrator administratorMailAddress = administratorService.findByMailAddress(form.getMailAddress());
 		if (administratorMailAddress != null) {
 			FieldError fieldError = new FieldError(result.getObjectName(), "mailAddress", "メールアドレスが重複しています。");
@@ -142,7 +126,6 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/login")
 	public String login(LoginForm form, BindingResult result, Model model) {
-		//		System.out.println(10/ 0);
 		Administrator administrator = administratorService.login(form.getMailAddress(), form.getPassword());
 		if (administrator == null) {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが不正です。");

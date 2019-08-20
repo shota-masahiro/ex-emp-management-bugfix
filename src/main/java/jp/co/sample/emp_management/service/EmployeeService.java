@@ -67,4 +67,20 @@ public class EmployeeService {
 		}
 		return employeeRepository.findByName(("%" + name +"%"));
 	}
+	
+	
+	/**
+	 * 従業員情報を登録します.
+	 * 
+	 * @param employee 従業員情報
+	 */
+	public void insert(Employee employee) {
+		employeeRepository.insert(employee);
+	}
+	
+	
+	public Integer getMaxId() {
+		return employeeRepository.getMaxId();
+	}
+	
 }

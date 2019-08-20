@@ -2,6 +2,8 @@ package jp.co.sample.emp_management.repository;
 
 import java.util.List;
 
+import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.jdbc.core.RowMapper;
@@ -106,4 +108,31 @@ public class EmployeeRepository {
 		}
 		return employeeList;
 	}
+	
+	
+	/**
+	 * 従業員情報を挿入します.
+	 * 
+	 * @param employee 従業員情報
+	 */
+	
+	public synchronized void insert(Employee employee) {
+		SqlParameterSource param = new BeanPropertySqlParameterSource(employee);
+		StringBuilder sql = new StringBuilder();
+		sql.append("INSERT INTO employees(id, name, image, gender, hire_date, mail_address, zip_code, address, telephone, salary, characteristics, dependents_count) ");
+		sql.append("VALUES(:id, :name, :image, :gender, :hireDate, :mailAddress, :zipCode, :address, :telephone, :salary, :characteristics, :dependentsCount)");
+		template.update(sql.toString(), param);
+	}
+	
+	
+	public Integer getMaxId() {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT max(id) + 1 FROM employees");
+		
+		SqlParameterSource param = new MapSqlParameterSource();
+		
+		return template.queryForObject(sql.toString(), param, Integer.class);
+	}
+	
+	
 }
