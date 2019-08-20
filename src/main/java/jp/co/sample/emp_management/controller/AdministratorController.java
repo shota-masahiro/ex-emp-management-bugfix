@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ public class AdministratorController {
 
 	@Autowired
 	private AdministratorService administratorService;
-	
+
 	@Autowired
 	private HttpSession session;
 
@@ -41,7 +42,7 @@ public class AdministratorController {
 	public InsertAdministratorForm setUpInsertAdministratorForm() {
 		return new InsertAdministratorForm();
 	}
-	
+
 	//  (SpringSecurityに任せるためコメントアウトしました)
 	@ModelAttribute
 	public LoginForm setUpLoginForm() {
@@ -71,27 +72,27 @@ public class AdministratorController {
 	@RequestMapping("/insert")
 	public String insert(
 			@Validated InsertAdministratorForm form,
-			BindingResult result,
-			Model model) {
+			BindingResult result) {
+
+		//エラーチェックと同じようにする
+		Administrator administratorMailAddress = administratorService.findByMailAddress(form.getMailAddress());
+		if (administratorMailAddress != null) {
+			FieldError fieldError = new FieldError(result.getObjectName(), "mailAddress", "メールアドレスが重複しています。");
+			result.addError(fieldError);
+		}
+
+		if(!form.getPassword().equals(form.getConfirmationPassword())) {
+			FieldError fieldError = new FieldError(result.getObjectName(), "confirmationPassword", "パスワードが一致していません。");
+			result.addError(fieldError);
+		}
 		
 		if (result.hasErrors()) {
 			return toInsert();
 		}
-		
-		Administrator administratorMailAddress = administratorService.findByMailAddress(form.getMailAddress());
-		if (administratorMailAddress != null) {
-			model.addAttribute("mailAddressError", "メールアドレスが重複しています。");
-			return toInsert();
-		}
-		
-		if(!form.getPassword().equals(form.getConfirmationPassword())) {
-			model.addAttribute("errorMessage", "パスワードが一致していません。");
-			return toInsert();
-		}
-		
+
 		Administrator administrator = new Administrator();
 		BeanUtils.copyProperties(form, administrator);
-		
+
 		administratorService.insert(administrator);
 
 		return "redirect:/";
@@ -121,7 +122,7 @@ public class AdministratorController {
 	 */
 	@RequestMapping("/login")
 	public String login(LoginForm form, BindingResult result, Model model) {
-//		System.out.println(10/ 0);
+		//		System.out.println(10/ 0);
 		Administrator administrator = administratorService.login(form.getMailAddress(), form.getPassword());
 		if (administrator == null) {
 			model.addAttribute("errorMessage", "メールアドレスまたはパスワードが不正です。");
@@ -130,7 +131,7 @@ public class AdministratorController {
 		session.setAttribute("administratorName", administrator.getName());
 		return "forward:/employee/showList";
 	}
-	
+
 	/////////////////////////////////////////////////////
 	// ユースケース：ログアウトをする
 	/////////////////////////////////////////////////////
@@ -144,5 +145,5 @@ public class AdministratorController {
 		session.invalidate();
 		return "redirect:/";
 	}
-	
+
 }
