@@ -21,7 +21,7 @@ public class EmployeeService {
 
 	@Autowired
 	private EmployeeRepository employeeRepository;
-	
+
 	/**
 	 * 従業員情報を全件取得します.
 	 * 
@@ -31,7 +31,7 @@ public class EmployeeService {
 		List<Employee> employeeList = employeeRepository.findAll();
 		return employeeList;
 	}
-	
+
 	/**
 	 * 従業員情報を取得します.
 	 * 
@@ -43,7 +43,7 @@ public class EmployeeService {
 		Employee employee = employeeRepository.load(id);
 		return employee;
 	}
-	
+
 	/**
 	 * 従業員情報を更新します.
 	 * 
@@ -52,8 +52,8 @@ public class EmployeeService {
 	public void update(Employee employee) {
 		employeeRepository.update(employee);
 	}
-	
-	
+
+
 	/**
 	 * 名前の曖昧検索を行います.
 	 * 引数が空文字の場合は全件検索を行います。
@@ -67,8 +67,8 @@ public class EmployeeService {
 		}
 		return employeeRepository.findByName(("%" + name +"%"));
 	}
-	
-	
+
+
 	/**
 	 * 従業員情報を登録します.
 	 * 
@@ -77,8 +77,8 @@ public class EmployeeService {
 	public void insert(Employee employee) {
 		employeeRepository.insert(employee);
 	}
-	
-	
+
+
 	/**
 	 * IDの上限+1の数字を取得します.
 	 * 
@@ -87,8 +87,8 @@ public class EmployeeService {
 	public Integer getMaxId() {
 		return employeeRepository.getMaxId();
 	}
-	
-	
+
+
 	/**
 	 * 開始位置から10件または10件以下の値を取得します.
 	 * 
@@ -98,20 +98,6 @@ public class EmployeeService {
 	public List<Employee> findByPage(Integer num) {
 		return employeeRepository.findByPage(num);
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
 }
