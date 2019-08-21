@@ -2,13 +2,19 @@ package jp.co.sample.emp_management.controller;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,6 +39,9 @@ public class EmployeeController {
 
 	@Autowired
 	private EmployeeService employeeService;
+	
+	@Autowired
+	private HttpSession session;
 
 	/**
 	 * 使用するフォームオブジェクトをリクエストスコープに格納する.
@@ -55,8 +64,42 @@ public class EmployeeController {
 	 */
 	@RequestMapping("/showList")
 	public String showList(Model model) {
-		List<Employee> employeeList = employeeService.showList();
+		
+		Integer page = (Integer) session.getAttribute("page");
+		
+		if (page == null) {
+			page = 0;
+		}
+		
+		List<Employee> employeeList = employeeService.findByPage(page);
 		model.addAttribute("employeeList", employeeList);
+		
+		session.setAttribute("page", page);
+		
+		return "employee/list";
+	}
+	
+	@RequestMapping("/nextToBack")
+	public String nextToBackPage(Integer page, Model model) {
+		int i = 1;
+		int offset = page;
+		while (true) {
+			
+			if (page == 0) {
+				offset = 0;
+				break;
+			}
+			
+			if (page == i) {
+				offset =+ i*10;
+				break;
+			}
+			i++;
+		}
+		List<Employee> employeeList = employeeService.findByPage(offset);
+		model.addAttribute("employeeList", employeeList);
+		session.setAttribute("page", page);
+		session.setAttribute("size", employeeList.size());
 		return "employee/list";
 	}
 

@@ -125,6 +125,11 @@ public class EmployeeRepository {
 	}
 	
 	
+	/**
+	 * IDの上限+1の数字を取得します.
+	 * 
+	 * @return IDの上限+1の数字
+	 */
 	public Integer getMaxId() {
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT max(id) + 1 FROM employees");
@@ -132,6 +137,25 @@ public class EmployeeRepository {
 		SqlParameterSource param = new MapSqlParameterSource();
 		
 		return template.queryForObject(sql.toString(), param, Integer.class);
+	}
+	
+	
+	/**
+	 * 開始位置から10件または10件以下の値を取得します.
+	 * 
+	 * @param num データを取得する開始位置
+	 * @return 従業員情報
+	 */
+	public List<Employee> findByPage(Integer num) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT id, name, image, gender, hire_date, mail_address, zip_code, address, telephone, salary, characteristics, dependents_count ");
+		sql.append("FROM employees ORDER BY hire_date LIMIT 10 OFFSET :num");
+		
+		SqlParameterSource param = new MapSqlParameterSource().addValue("num", num);
+		
+		List<Employee> employeeList = template.query(sql.toString(), param, EMPLOYEE_ROW_MAPPER);
+		
+		return employeeList;
 	}
 	
 	

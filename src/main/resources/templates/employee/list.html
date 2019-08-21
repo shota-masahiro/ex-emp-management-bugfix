@@ -96,7 +96,7 @@
 					</tbody>
 				</table>
 
-
+				<span th:if="${session.page != 0}"><a th:href="@{'/employee/nextToBack?page=' + ${session.page - 1}}">前の10件</a></span> | <span th:if="${session.size > 9 || session.page == 0}"><a th:href="@{'/employee/nextToBack?page=' + ${session.page +1}}">次の10件</a></span>
 <!-- ここから下を編集する必要はありません -->
 
 			</div>

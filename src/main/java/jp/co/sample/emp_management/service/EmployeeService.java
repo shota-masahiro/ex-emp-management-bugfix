@@ -79,8 +79,39 @@ public class EmployeeService {
 	}
 	
 	
+	/**
+	 * IDの上限+1の数字を取得します.
+	 * 
+	 * @return IDの上限+1の数字
+	 */
 	public Integer getMaxId() {
 		return employeeRepository.getMaxId();
 	}
+	
+	
+	/**
+	 * 開始位置から10件または10件以下の値を取得します.
+	 * 
+	 * @param num データを取得する開始位置
+	 * @return 従業員情報
+	 */
+	public List<Employee> findByPage(Integer num) {
+		return employeeRepository.findByPage(num);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }
