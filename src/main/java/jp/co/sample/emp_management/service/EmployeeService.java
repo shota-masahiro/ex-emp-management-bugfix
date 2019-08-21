@@ -74,18 +74,9 @@ public class EmployeeService {
 	 * 
 	 * @param employee 従業員情報
 	 */
-	public void insert(Employee employee) {
+	public synchronized void insert(Employee employee) {
+		employee.setId(employeeRepository.getMaxId());
 		employeeRepository.insert(employee);
-	}
-
-
-	/**
-	 * IDの上限+1の数字を取得します.
-	 * 
-	 * @return IDの上限+1の数字
-	 */
-	public Integer getMaxId() {
-		return employeeRepository.getMaxId();
 	}
 
 

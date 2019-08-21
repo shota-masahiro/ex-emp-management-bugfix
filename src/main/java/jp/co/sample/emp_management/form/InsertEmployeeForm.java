@@ -1,6 +1,6 @@
 package jp.co.sample.emp_management.form;
 
-import javax.validation.constraints.NotBlank;
+import org.springframework.web.multipart.MultipartFile;
 
 public class InsertEmployeeForm {
 
@@ -11,7 +11,7 @@ public class InsertEmployeeForm {
 	private String name;
 
 	/** 画像 */
-	private String image;
+	private MultipartFile image;
 
 	/** 性別 */
 	private String gender;
@@ -68,10 +68,10 @@ public class InsertEmployeeForm {
 	}
 
 
-	public String getImage() {
+	public MultipartFile getImage() {
 		return image;
 	}
-	public void setImage(String image) {
+	public void setImage(MultipartFile image) {
 		this.image = image;
 	}
 

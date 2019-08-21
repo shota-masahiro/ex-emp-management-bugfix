@@ -1,26 +1,28 @@
 package jp.co.sample.emp_management.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.websocket.Session;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import jp.co.sample.emp_management.domain.Employee;
 import jp.co.sample.emp_management.form.InsertEmployeeForm;
@@ -64,21 +66,21 @@ public class EmployeeController {
 	 */
 	@RequestMapping("/showList")
 	public String showList(Model model) {
-		
+
 		Integer page = (Integer) session.getAttribute("page");
-		
+
 		if (page == null) {
 			page = 0;
 		}
-		
+
 		List<Employee> employeeList = employeeService.findByPage(page);
 		model.addAttribute("employeeList", employeeList);
-		
+
 		session.setAttribute("page", page);
-		
+
 		return "employee/list";
 	}
-	
+
 	/**
 	 * 「次の10件」と「前の10件」の値を取得します.
 	 * 
@@ -91,12 +93,12 @@ public class EmployeeController {
 		int i = 1;
 		int offset = page;
 		while (true) {
-			
+
 			if (page == 0) {
 				offset = 0;
 				break;
 			}
-			
+
 			if (page == i) {
 				offset =+ i*10;
 				break;
@@ -172,8 +174,8 @@ public class EmployeeController {
 		employeeService.update(employee);
 		return "redirect:/employee/showList";
 	}
-	
-	
+
+
 	/**
 	 * 従業員登録画面を出力します.
 	 * 
@@ -187,8 +189,8 @@ public class EmployeeController {
 		model.addAttribute("genderMap", genderMap);
 		return "employee/employee-insert";
 	}
-	
-	
+
+
 	/**
 	 * 従業員情報を挿入します.
 	 * 
@@ -197,23 +199,33 @@ public class EmployeeController {
 	 * @throws ParseException
 	 */
 	@RequestMapping("/insert")
-	public String insert(InsertEmployeeForm form) throws ParseException {
+	public String insert(InsertEmployeeForm form, HttpServletRequest request) throws ParseException {
 		Employee employee = new Employee();
 		BeanUtils.copyProperties(form, employee);
 		
-		Integer id = employeeService.getMaxId();
-		employee.setId(id);
+		//画像ファイルをimgディレクトリに追加している処理
+		String destination = "/src/main/resources/static/img/";
+		MultipartFile multipartFile = form.getImage();
+
+		Path fileNameAndPath = Paths.get(System.getProperty("user.dir")+destination, multipartFile.getOriginalFilename());
+		try {
+			Files.write(fileNameAndPath, multipartFile.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		employee.setImage(form.getImage().getOriginalFilename());
 		employee.setSalary(form.getIntSalary());
 		employee.setDependentsCount(form.getIntDependentsCount());
-		
+
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date date = dateFormat.parse(form.getHireDate());
 		employee.setHireDate(date);
-		
+
 		employeeService.insert(employee);
-		
+
 		return "redirect:/employee/showList";
 	}
-	
+
 
 }

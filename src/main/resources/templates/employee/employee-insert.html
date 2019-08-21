@@ -68,7 +68,7 @@
 
 <!-- ここにモックのform要素を貼り付けます -->
 
-					<form method="post" action="list.html" th:action="@{/employee/insert}" th:object="${insertEmployeeForm}">
+					<form method="post" action="list.html" th:action="@{/employee/insert}" th:object="${insertEmployeeForm}" enctype="multipart/form-data">
 						<fieldset>
 							<legend>従業員登録フォーム</legend>
 							<table class="table table-striped">
